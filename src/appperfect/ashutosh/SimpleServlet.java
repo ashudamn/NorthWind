@@ -32,10 +32,27 @@ public class SimpleServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		response.setContentType("text/html");
 		PrintWriter pw = response.getWriter();
-
-			if(!AccessDB.connect2DBandShowResults(request,pw)){
-				pw.println("please go back enter correct information the error describes itself as :-> ");	
+		String username=request.getParameter("username").trim();
+		String password=request.getParameter("password");
+		String url=request.getParameter("url").trim();
+		String driver=request.getParameter("driver").trim();
+		String query=request.getParameter("query").trim();
+		if(ErrorDisplayer.validateRequired(driver, url, username, password, query, pw))
+		{
+			try{
+				AccessDB.connect2DBandShowResults(driver, url, username, password, query,pw);
 			}
+			catch(Exception e){
+				ErrorDisplayer.findError(e);
+				pw.println("please go back enter correct information the error describes itself as :-> ");
+			}
+			
+		}
+		else
+		{
+			pw.println("please go back enter correct information the error describes itself as :-> ");	
+		}
+			
 			// TODO Auto-generated catch block
 			pw.println(ErrorDisplayer.getErrorMessage());
 		pw.println("<a href=\"http://localhost:8080/NorthWind/\">Back</a>");

@@ -11,7 +11,7 @@ public static String getErrorMessage() {
 
 public static void findError(Exception e) {
 	//String error=e.toString();
-
+	System.out.println(e.toString());
 	setErrorMessage(e.getMessage());
 	return;
 	/*if(error.contains("ClassNotFound"))

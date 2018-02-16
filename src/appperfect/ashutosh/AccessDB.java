@@ -12,48 +12,22 @@ import com.mysql.jdbc.Statement;
 
 public class AccessDB {
 	private static ResultSet rs;
-	public static boolean connect2DBandShowResults(HttpServletRequest request,PrintWriter pw)
+	private static Connection conn;
+	private static Statement st;
+	public static void connect2DBandShowResults(String driver,String url,String username,String password,String query,PrintWriter pw) throws Exception
 	{
-		String username=request.getParameter("username").trim();
-		String password=request.getParameter("password");
-		String url=request.getParameter("url").trim();
-		String driver=request.getParameter("driver").trim();
-		String query=request.getParameter("query").trim();
-		Connection conn=null;
-		Statement st=null;
-		ResultSet rs=null;
-		if(ErrorDisplayer.validateRequired(driver, url, username, password, query, pw))
-		{
-			try {
 				Class.forName(driver);
 				conn=(Connection) DriverManager.getConnection(url,username,password);
 				st=(Statement) conn.createStatement();
 				rs=st.executeQuery(query);
 				setRs(rs);
-				showResults(pw);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				ErrorDisplayer.findError(e);
-				e.printStackTrace();
-				return false;
-			}
-			finally{
-				try {
-					st.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if(rs==null||rs.next()==false){
+					throw new Exception("result is null");
 				}
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				else
+				{
+					showResults(pw);
 				}
-			}
-			return true;
-		}
-		return false;
 	}
 	public ResultSet getRs() {
 		return rs;
